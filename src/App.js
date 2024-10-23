@@ -1,23 +1,32 @@
-import logo from './logo.svg';
 import './App.css';
+import { PGlite } from '@electric-sql/pglite';
+import { Repl } from '@electric-sql/pglite-repl'
+
+const db = new PGlite()
+
+await db.exec(`
+  CREATE TABLE IF NOT EXISTS todo (
+    id SERIAL PRIMARY KEY,
+    task TEXT,
+    done BOOLEAN DEFAULT false
+  );
+  INSERT INTO todo (task, done) VALUES ('Install PGlite from NPM', true);
+  INSERT INTO todo (task, done) VALUES ('Load PGlite', true);
+  INSERT INTO todo (task, done) VALUES ('Create a table', true);
+  INSERT INTO todo (task, done) VALUES ('Insert some data', true);
+  INSERT INTO todo (task) VALUES ('Update a task');
+`)
+
+const ret = await db.query(`
+  SELECT * from todo WHERE id = 1;
+`)
+
+console.log(ret.rows)
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Repl pg={db} />
     </div>
   );
 }
