@@ -17,11 +17,22 @@ await db.exec(`
   INSERT INTO todo (task) VALUES ('Update a task');
 `)
 
-const ret = await db.query(`
-  SELECT * from todo WHERE id = 1;
+let ret = await db.query(`
+  SELECT * from todo WHERE id = 5;
 `)
 
-console.log(ret.rows)
+console.log("Example query results: ", ret.rows);
+
+await db.query(
+  'UPDATE todo SET task = $2, done = $3 WHERE id = $1',
+  [5, 'Update a task using parametrised queries', true],
+)
+
+ret = await db.query(`
+  SELECT * from todo WHERE id = 5;
+`)
+
+console.log("Example updated results: ", ret.rows);
 
 function App() {
   return (
